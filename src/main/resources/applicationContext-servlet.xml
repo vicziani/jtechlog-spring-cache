@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <context:component-scan base-package="jtechlog.cache.ui"/>
+
+    <mvc:annotation-driven/>
+
+    <mvc:view-controller path="/" view-name="index"/>
+
+    <mvc:resources mapping="/css/**" location="/css/">
+        <mvc:cache-control max-age="31556926" cache-public="true"/>
+        <mvc:resource-chain resource-cache="false">
+            <mvc:resolvers>
+                <mvc:version-resolver>
+                    <mvc:fixed-version-strategy version="1.0" patterns="/**"/>
+                </mvc:version-resolver>
+            </mvc:resolvers>
+        </mvc:resource-chain>
+    </mvc:resources>
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+</beans>
