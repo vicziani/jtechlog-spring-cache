@@ -26,8 +26,6 @@ public class EmployeeControllerTest {
 
     private MockMvc mockMvc;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeControllerTest.class);
-
     @Before
     public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
@@ -35,21 +33,41 @@ public class EmployeeControllerTest {
 
     @Test
     public void getEmployees() throws Exception {
-        this.mockMvc.perform(get("/api/employees")
-                .accept(MediaType.parseMediaType("application/json"))
-                .contentType(MediaType.parseMediaType("application/json")))
+        this.mockMvc.perform(get("/api/employees"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$[0].name").value("John Doe"));
     }
 
     @Test
     public void getEmployee() throws Exception {
-        this.mockMvc.perform(get("/api/employees/1")
-                .accept(MediaType.parseMediaType("application/json"))
-                .contentType(MediaType.parseMediaType("application/json")))
+        this.mockMvc.perform(get("/api/employees/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.name").value("John Doe"));
     }
+
+    @Test
+    public void getEmployeeNotModified() throws Exception {
+        String etag = this.mockMvc.perform(get("/api/employees"))
+                .andReturn().getResponse().getHeader("ETag");
+
+        this.mockMvc.perform(get("/api/employees")
+                .header("If-none-match", etag))
+                .andExpect(status().isNotModified());
+    }
+
+    @Test
+    public void getEmployeeModified() throws Exception {
+        String etag = this.mockMvc.perform(get("/api/employees"))
+                .andReturn().getResponse().getHeader("ETag");
+
+        this.mockMvc.perform(post("/api/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\": \"John Roe\"}"));
+
+        this.mockMvc.perform(get("/api/employees")
+                .header("If-none-match", etag))
+                .andExpect(status().isOk());
+    }
+
+
 }

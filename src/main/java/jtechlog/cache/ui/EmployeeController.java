@@ -19,18 +19,19 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    // curl -H "Content-Type: application/json"  http://localhost:8080/api/employees
-    @RequestMapping(value = "/employees", method = RequestMethod.GET, produces = "application/json")
+    // http get localhost:8080/api/employees
+    // http get localhost:8080/api/employees 'If-none-match:"787115917"'
+    @RequestMapping(value = "/employees", method = RequestMethod.GET)
     public ResponseEntity<List<Employee>> findAll() {
         List<Employee> employees = employeeService.findAll();
         return ResponseEntity
                 .ok()
-                .eTag(hashToEtag(employees.hashCode()))
+                .eTag(hashToEtag(employees))
                 .body(employees);
     }
 
-    // curl -H "Content-Type: application/json"  http://localhost:8080/api/employees/1
-    @RequestMapping(value = "/employees/{id}", method = RequestMethod.GET, produces="application/json")
+    // http get localhost:8080/api/employees/1
+    @RequestMapping(value = "/employees/{id}", method = RequestMethod.GET)
     public ResponseEntity<Employee> findOne(@PathVariable("id") long id) {
         Employee employee = employeeService.findOne(id);
         return ResponseEntity
@@ -39,8 +40,8 @@ public class EmployeeController {
                 .body(employee);
     }
 
-     // curl -H "Content-Type: application/jse":"xyz"}' http://localhost:8080/api/employees
-    @RequestMapping(value = "/employees", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+     // http post localhost:8080/api/employees name='John Doe'
+    @RequestMapping(value = "/employees", method = RequestMethod.POST)
     public Employee save(@RequestBody Employee employee) {
         return employeeService.save(employee);
     }

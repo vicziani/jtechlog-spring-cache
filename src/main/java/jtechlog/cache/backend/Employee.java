@@ -8,7 +8,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @Entity
-@XmlRootElement
 public class Employee implements Serializable {
     
     @Id
